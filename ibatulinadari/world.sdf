@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+    <include>
+      <uri>file:///home/darya/building_editor_models/flat_of_my_dream/world.sdf</uri> 
+    </include>
+  </world>
+</sdf>
