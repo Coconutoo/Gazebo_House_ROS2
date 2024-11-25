@@ -3,6 +3,7 @@
 Студент: Эспиноса Василита Кристина Микаела НКНбд-01-22
 
 # Gazebo House ROS2
+ Я создалa два мира, во втором мире world1.sdf появляется робот, как вы можете видеть на изображении.
 
 Используемое:
 - [VirtualBox 7.1.4](https://www.virtualbox.org/wiki/Downloads)
@@ -34,4 +35,5 @@ cd ..
 colcon build --symlink-install
 
 ### Запуск симуляции в ROS2
-ros2 launch turtlebot4_ignition_bringup turtlebot4_ignition.launch.py nav2:=true slam:=false localization:=true rviz:=true
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py world:=/home/cristina/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot_gazebo/worlds/world1.sdf
+
