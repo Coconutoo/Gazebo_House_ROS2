@@ -26,14 +26,34 @@ gazebo --verbose
 1. Создание  файль  'world.sdf' -> Запуск мира в Ignition Gazebo командой
 ign gazebo world.sdf 
 
-### Запуск симуляции в turtlebot 4
+### Запуск симуляции в turtlebot 3
 1. Создание рабочего пространства:
-mkdir -p ~/project/vlbarsegyan/turtlebot4_ws/src
-cd ~/project/vlbarsegyan/turtlebot4_ws/src
-git clone https://github.com/turtlebot/turtlebot4.git
+mkdir -p ~/turtlebot3_ws/src
+cd ~/turtlebot3_ws/src
+wget https://raw.githubusercontent.com/ROBOTIS-GIT/turtlebot3/ros2/turtlebot3.repos
+vcs import src < turtlebot3.repos
 cd ..
 colcon build --symlink-install
+echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
 
+echo 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models' >> ~/.bashrc
+echo 'export TURTLEBOT3_MODEL=waffle_pi' >> ~/.bashrc
+source ~/.bashrc
 ### Запуск симуляции в ROS2
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py world:=/home/cristina/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot_gazebo/worlds/world1.sdf
 
+#Открываем новый терминал 
+
+source ~/turtlebot3_ws/install/setup.bash
+ros2 run image_tools showimage
+
+#Открываем еще один терминал
+
+~/turtlebot3_ws$ source ~/turtlebot3_ws/install/setup.bash
+~/turtlebot3_ws$ ros2 launch turtlebot3_bringup rviz2.launch.py
+#RVIZ
+1- кнопочка Add
+By topic—> на /image_raw/camera
+
+# В новом терминале, чтобы робот двигался
+ros2 run turtlebot3_teleop teleop_keyboard
