@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='world'>
+  <model name='world_smth'>
     <pose>1.03291 -0.819496 0 0 -0 0</pose>
     <link name='Wall_0'>
       <pose>-0.319484 -0.966154 0 0 -0 0</pose>
