@@ -29,7 +29,7 @@
 <sdf version="1.6">
   <world name="default">
     <include>
-      <uri>file:///home/ngalacan/building_editor_models/kolea_kv/model.sdf</uri> 
+      <uri>file:///home/ngalacan/house_project/house_models/model.sdf</uri> 
     </include>
   </world>
 </sdf>
