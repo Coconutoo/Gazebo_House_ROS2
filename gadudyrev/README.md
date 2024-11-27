@@ -62,6 +62,9 @@
 
 ![Gazebo Classic](./images/1.png)
 
+2. Далее либо используя комбинацию клавишь Ctrl+B, либо через меню сверху открываем Building Editor.
+
+![Building Editor](./images/2.png)
    
    
    
