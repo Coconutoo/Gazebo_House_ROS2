@@ -59,7 +59,9 @@
    `gazebo`
 
    откроется приложение, как на картинке ниже.
+
+![Gazebo Classic](./images/1.png)
+
    
-   ![Gazebo Classic](./images/1.png)
    
    
