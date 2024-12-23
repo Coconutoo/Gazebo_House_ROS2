@@ -1,0 +1,847 @@
+ПОЛЕЗНЫЕ ССЫЛКИ!!!!
+
+gazebo simulator org
+
+
+https://classic.gazebosim.org/tutorials?tut=building_editor
+
+https://github.com/Elizaveta-Parfenova/ros2-humble-projects/blob/main/turtlebot-4/tutorial/Manual%20%22%D0%A1reation%20ignition-gazebo%20flat%22.md
+
+https://turtlebot.github.io/turtlebot4-user-manual/software/simulation.html
+
+https://turtlebot.github.io/turtlebot4-user-manual/software/turtlebot4_simulator.html#source-installation
+
+https://ubuntu.com/blog/simulate-the-turtlebot3 - в этой ссылке при установке проще всего, прям супер-ссылка, но ОБЯЗАТЕЛЬНО менять везде foxy на humble
+
+
+У вас должно быть "два газебо" -- иконки с кубиком и крылышком.
+То, которое с кубиком -- просто газебо. С крылышком - газебо игнишн. В первом газебо мы модель, во втором добавляем уже землю, солнце и мебель. Из первого сохраняем модель, из второго -- мир.
+
+
+1. Открыть газебо, "Edit/Building Editor"
+
+$ gazebo
+
+2. Загрузить пнгшку квартиры
+3. Поставить стены - окна+двери (первая полезная ссылка даст вам подробности, как это делать)
+4. создать лестницу и второй этаж, если надо
+5. сохранить все, выйти, больше редачить НЕЛЬЗЯ!!! 
+
+===============================
+
+6.После сохранения модели из Gazebo, вы получите два файла: model.sdf и model.config. Для загрузки в Gazebo Ignition потребуется:
+Создать в этой же папке файл world.sdf со следующим содержанием:
+ЗАМЕНИ В КОДЕ ПУТЬ ДО ФАЙЛА!!!! УБИРАЕМ ФИГУРНЫЕ СКОБКИ ИЗ ССЫЛКИ
+
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+    <include>
+      <uri>file://{путь до вашего файла model.sdf}</uri> 
+    </include>
+  </world>
+</sdf>
+
+Писать путь до файла лучше через /home/ а не через ~/. Пример: /home/user_name/building_editor_models/Untitled/model.sdf
+
+
+7. открываем мир в газебо игнишн через:
+ign gazebo world.sdf 
+или
+ign gazebo -v4 world.sdf 
+Второе даст комменты в терминал
+
+Команды эти мы пишем в терминале, где открыта папка с ними.
+
+===============================
+
+8. В правом верхнем углу заходим в три точки, там находим плагин "Resourse Spawner", ждем загрузки всех моделей (в моей версии их 1073)
+9. ОБЯЗАТЕЛЬНО добавляем землю (элемент ground plane), иначе вся мебель и робот в том чсиле будет падать вниз, не имея опору. Также добавляем свет (модель sun)
+10. Через поиск ищем различную мебель, элементы интерьера и так далее, и устанавливаем их в созданной модели стен, задаем правильные коррдинаты и угла поворотов
+
+ВАЖНО!
+После добавления модели sun пол несколько посветлеет и появится ТЕНЬ от здания.
+Если вы загрузили здание и оно черное, и не видно комнаты -- это нормально. Нужно либо нажать правую кнопку тачпада/мыши или тапнуть двумя пальцами по тачпаду -- смотря как настроено -- по зданию. Откроется типа как окошечко маленькое. Там view -> transparent или что-то вроде такого. В общем, чтобы сделать стены прозрачными. И тогда видно всё внутри и можно расставлять мебель.
+Если мы хотим подвинуть мебель, то приближаем её так, чтобы между нами и ею не было стены, нажимаем на значок передвижения на панели управления вверху (рядом со стрелочкой, второй элемент слева). Нажимаем на предмет мебели, который хотим подвинуть, от него появится три вектора, по которым его можно двигать.
+Чтобы повернуть делаем все то же самое, но нажимаем третий значок на панели, там типа две стрелочки образуют круг. Появятся оси, по которым можно поворачивать.
+
+
+11. Сохраняем мир: нажимаем в верхнем парвом углу на менюшку, "Save world as", выбираем файл с раширением sdf (лучше выбрать тот же самый файл world.sdf), ОБЯЗАТЕЛЬНО тыкаем обе галочки "Expand include tags" и "Save Fuel model version" и сохраняем
+
+
+ПОТОМ
+
+12. Закрываем газебо.
+Я попробовала через тертлбот4, у меня не заработало, так что стала делать через 3.
+Он у меня уже был установлен ранее, но вы можете погуглить что-то вроде "как установить тертлбот3 симуляцию".
+Поэтому далее я напишу что делать, чтобы всё запустилось в третьей версии бота!
+
+(Ниже будет попытка с 4 версией, переходи к п.22!)
+
+
+
+===============================
+
+
+13. Файл world.sdf переименовываем что-то вроде world_1.sdf, чтоб не путаться. Копируем его в папку /home/taisia/ros2_ws_1/src/turtlebot3_simulations/turtlebot3_gazebo/worlds
+
+У вас она возможно будет выглядеть иначе чуть, но часть /src/turtlebot3_simulations/turtlebot3_gazebo/worlds должна быть такой!!!
+
+14. Идем в папку /home/taisia/ros2_ws_1/src/turtlebot3_simulations/turtlebot3_gazebo/launch, там копируем файл turtlebot3_world.launch.py
+
+Содержимое ПРИМЕРНО такое:
+
+===============================
+
+#!/usr/bin/env python3
+#
+# Copyright 2019 ROBOTIS CO., LTD.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Authors: Joep Tool
+
+import os
+
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
+
+
+def generate_launch_description():
+    launch_file_dir = os.path.join(get_package_share_directory('turtlebot3_gazebo'), 'launch')
+    pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
+
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    x_pose = LaunchConfiguration('x_pose', default='-2.0')
+    y_pose = LaunchConfiguration('y_pose', default='-0.5')
+
+    world = os.path.join(
+        get_package_share_directory('turtlebot3_gazebo'),
+        'worlds',
+        'world_my1.sdf'
+    )
+
+    gzserver_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')
+        ),
+        launch_arguments={'world': world}.items()
+    )
+
+    gzclient_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')
+        )
+    )
+
+    robot_state_publisher_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(launch_file_dir, 'robot_state_publisher.launch.py')
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
+
+    spawn_turtlebot_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(launch_file_dir, 'spawn_turtlebot3.launch.py')
+        ),
+        launch_arguments={
+            'x_pose': x_pose,
+            'y_pose': y_pose
+        }.items()
+    )
+
+    ld = LaunchDescription()
+
+    # Add the commands to the launch description
+    ld.add_action(gzserver_cmd)
+    ld.add_action(gzclient_cmd)
+    ld.add_action(robot_state_publisher_cmd)
+    ld.add_action(spawn_turtlebot_cmd)
+
+    return ld
+
+
+===============================
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ИЩЕМ ЧАСТЬ
+    world = os.path.join(
+        get_package_share_directory('turtlebot3_gazebo'),
+        'worlds',
+        'world.sdf'
+    )
+
+Там меняем world.sdf или что там у вас на этом месте на название вашего sdf файла. У меня это world_my2.sdf
+Это вы типа настроили доступ к файлу, который у вас с миром.
+
+
+15. затем перемещаемся в папку, где у нас src
+
+taisia@taisia-Inspiron-5558:~$ source /opt/ros/humble/setup.bash
+taisia@taisia-Inspiron-5558:~$ cd ros2_ws_1
+taisia@taisia-Inspiron-5558:~/ros2_ws_1$ source ~/ros2_ws_1/install/setup.bash
+taisia@taisia-Inspiron-5558:~/ros2_ws_1$ 
+
+У меня это вот так вот.
+
+=========================================================================
+
+16. Камера!
+
+Меняем файл робота (у меня это вроде как model.sdf в папке /home/taisia/ros2_ws_1/src/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_waffle):
+
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="turtlebot3_waffle">  
+  <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+
+    <link name="base_footprint"/>
+
+    <link name="base_link">
+
+      <inertial>
+        <pose>-0.064 0 0.048 0 0 0</pose>
+        <inertia>
+          <ixx>4.2111447e-02</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4.2111447e-02</iyy>
+          <iyz>0</iyz>
+          <izz>7.5254874e-02</izz>
+        </inertia>
+        <mass>1.3729096e+00</mass>
+      </inertial>
+
+      <collision name="base_collision">
+        <pose>-0.064 0 0.048 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.265 0.265 0.089</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="base_visual">
+        <pose>-0.064 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://turtlebot3_common/meshes/waffle_base.dae</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="imu_link">
+      <sensor name="tb3_imu" type="imu">
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
+        <imu>
+          <angular_velocity>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-4</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-4</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-4</stddev>
+              </noise>
+            </z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>1.7e-2</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>1.7e-2</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>1.7e-2</stddev>
+              </noise>
+            </z>
+          </linear_acceleration>
+        </imu>
+        <plugin name="turtlebot3_imu" filename="libgazebo_ros_imu_sensor.so">
+          <ros>
+            <!-- <namespace>/tb3</namespace> -->
+            <remapping>~/out:=imu</remapping>
+          </ros>
+        </plugin>
+      </sensor>
+    </link>
+
+    <link name="base_scan">    
+      <inertial>
+        <pose>-0.052 0 0.111 0 0 0</pose>
+        <inertia>
+          <ixx>0.001</ixx>
+          <ixy>0.000</ixy>
+          <ixz>0.000</ixz>
+          <iyy>0.001</iyy>
+          <iyz>0.000</iyz>
+          <izz>0.001</izz>
+        </inertia>
+        <mass>0.114</mass>
+      </inertial>
+
+      <collision name="lidar_sensor_collision">
+        <pose>-0.052 0 0.111 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.0508</radius>
+            <length>0.055</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="lidar_sensor_visual">
+        <pose>-0.064 0 0.121 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://turtlebot3_common/meshes/lds.dae</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <sensor name="hls_lfcd_lds" type="ray">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <pose>-0.064 0 0.121 0 0 0</pose>
+        <update_rate>5</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1.000000</resolution>
+              <min_angle>0.000000</min_angle>
+              <max_angle>6.280000</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.120000</min>
+            <max>3.5</max>
+            <resolution>0.015000</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name="turtlebot3_laserscan" filename="libgazebo_ros_ray_sensor.so">
+          <ros>
+            <!-- <namespace>/tb3</namespace> -->
+            <remapping>~/out:=scan</remapping>
+          </ros>
+          <output_type>sensor_msgs/LaserScan</output_type>
+          <frame_name>base_scan</frame_name>
+        </plugin>
+      </sensor>
+    </link>
+
+    <link name="wheel_left_link">
+
+      <inertial>
+        <pose>0.0 0.144 0.023 -1.57 0 0</pose>
+        <inertia>
+          <ixx>1.1175580e-05</ixx>
+          <ixy>-4.2369783e-11</ixy>
+          <ixz>-5.9381719e-09</ixz>
+          <iyy>1.1192413e-05</iyy>
+          <iyz>-1.4400107e-11</iyz>
+          <izz>2.0712558e-05</izz>
+        </inertia>
+        <mass>0.1</mass>
+      </inertial>
+
+      <collision name="wheel_left_collision">
+        <pose>0.0 0.144 0.023 -1.57 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.033</radius>
+            <length>0.018</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <!-- This friction pamareter don't contain reliable data!! -->
+          <friction>
+            <ode>
+              <mu>100000.0</mu>
+              <mu2>100000.0</mu2>
+              <fdir1>0 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+5</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+
+      <visual name="wheel_left_visual">
+        <pose>0.0 0.144 0.023 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://turtlebot3_common/meshes/tire.dae</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="wheel_right_link">
+
+      <inertial>
+        <pose>0.0 -0.144 0.023 -1.57 0 0</pose>
+        <inertia>
+          <ixx>1.1175580e-05</ixx>
+          <ixy>-4.2369783e-11</ixy>
+          <ixz>-5.9381719e-09</ixz>
+          <iyy>1.1192413e-05</iyy>
+          <iyz>-1.4400107e-11</iyz>
+          <izz>2.0712558e-05</izz>
+        </inertia>
+        <mass>0.1</mass>
+      </inertial>
+    
+      <collision name="wheel_right_collision">
+        <pose>0.0 -0.144 0.023 -1.57 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.033</radius>
+            <length>0.018</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <!-- This friction pamareter don't contain reliable data!! -->
+          <friction>
+            <ode>
+              <mu>100000.0</mu>
+              <mu2>100000.0</mu2>
+              <fdir1>0 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+5</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+
+      <visual name="wheel_right_visual">
+        <pose>0.0 -0.144 0.023 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://turtlebot3_common/meshes/tire.dae</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name='caster_back_right_link'>
+      <pose>-0.177 -0.064 -0.004 -1.57 0 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia>
+          <ixx>0.00001</ixx>
+          <ixy>0.000</ixy>
+          <ixz>0.000</ixz>
+          <iyy>0.00001</iyy>
+          <iyz>0.000</iyz>
+          <izz>0.00001</izz>
+        </inertia>
+      </inertial>
+      <collision name='collision'>
+        <geometry>
+          <sphere>
+            <radius>0.005000</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+5</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+    </link>
+
+    <link name='caster_back_left_link'>
+      <pose>-0.177 0.064 -0.004 -1.57 0 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia>
+          <ixx>0.00001</ixx>
+          <ixy>0.000</ixy>
+          <ixz>0.000</ixz>
+          <iyy>0.00001</iyy>
+          <iyz>0.000</iyz>
+          <izz>0.00001</izz>
+        </inertia>
+      </inertial>
+      <collision name='collision'>
+        <geometry>
+          <sphere>
+            <radius>0.005000</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+5</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+    </link>
+
+    <link name="camera_link"/>
+
+    <link name="camera_rgb_frame">
+      <inertial>
+        <pose>0.069 -0.047 0.107 0 0 0</pose>
+        <inertia>
+          <ixx>0.001</ixx>
+          <ixy>0.000</ixy>
+          <ixz>0.000</ixz>
+          <iyy>0.001</iyy>
+          <iyz>0.000</iyz>
+          <izz>0.001</izz>
+        </inertia>
+        <mass>0.035</mass>
+      </inertial>
+
+      <pose>0.069 -0.047 0.107 0 0 0</pose>
+      <sensor name="camera" type="camera">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <update_rate>30</update_rate>
+        <camera name="intel_realsense_r200">
+          <horizontal_fov>1.02974</horizontal_fov>
+          <image>
+            <width>1920</width>
+            <height>1080</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <!-- Noise is sampled independently per pixel on each frame.
+                  That pixel's noise value is added to each of its color
+                  channels, which at that point lie in the range [0,1]. -->
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+          <plugin name="camera_driver" filename="libgazebo_ros_camera.so">
+            <always_on>true</always_on>
+            <update_rate>30</update_rate>
+            <camera_name>camera</camera_name>
+            <image_topic_name>camera/image_raw</image_topic_name>
+            <camera_info_topic_name>camera/camera_info</camera_info_topic_name>
+            <frame_name>camera_rgb_frame</frame_name>
+          </plugin>
+      </sensor>
+    </link>    
+
+    <joint name="base_joint" type="fixed">
+      <parent>base_footprint</parent>
+      <child>base_link</child>
+      <pose>0.0 0.0 0.010 0 0 0</pose>
+    </joint>
+
+    <joint name="wheel_left_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>wheel_left_link</child>
+      <pose>0.0 0.144 0.023 -1.57 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>
+
+    <joint name="wheel_right_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>wheel_right_link</child>
+      <pose>0.0 -0.144 0.023 -1.57 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>
+
+    <joint name='caster_back_right_joint' type='ball'>
+      <parent>base_link</parent>
+      <child>caster_back_right_link</child>
+    </joint>
+
+    <joint name='caster_back_left_joint' type='ball'>
+      <parent>base_link</parent>
+      <child>caster_back_left_link</child>
+    </joint>
+
+    <joint name="imu_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>imu_link</child>
+      <pose>-0.032 0 0.068 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>    
+
+    <joint name="lidar_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>base_scan</child>
+      <pose>-0.064 0 0.121 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>
+
+    <joint name="camera_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>camera_link</child>
+      <pose>0.064 -0.065 0.094 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>
+
+    <joint name="camera_rgb_joint" type="fixed">
+      <parent>camera_link</parent>
+      <child>camera_rgb_frame</child>
+      <pose>0.005 0.018 0.013 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>
+
+    <plugin name="turtlebot3_diff_drive" filename="libgazebo_ros_diff_drive.so">
+
+      <ros>
+        <!-- <namespace>/tb3</namespace> -->
+      </ros>
+
+      <update_rate>30</update_rate>
+
+      <!-- wheels -->
+      <left_joint>wheel_left_joint</left_joint>
+      <right_joint>wheel_right_joint</right_joint>
+
+      <!-- kinematics -->
+      <wheel_separation>0.287</wheel_separation>
+      <wheel_diameter>0.066</wheel_diameter>
+
+      <!-- limits -->
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+      <command_topic>cmd_vel</command_topic>
+
+      <!-- output -->
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+
+    </plugin>
+
+    <plugin name="turtlebot3_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+        <!-- <namespace>/tb3</namespace> -->
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>30</update_rate>
+      <joint_name>wheel_left_joint</joint_name>
+      <joint_name>wheel_right_joint</joint_name>
+    </plugin>    
+
+  </model>
+</sdf>
+
+
+
+
+
+
+
+=========================================================================
+
+=========================================================================
+
+17. Теперь нужно собрать пространство. Инструкция по работе с колкон билд была в самом начале в туториалах по рос2:
+Ссылка на туториалы:
+
+У меня оно уже есть, поэтому я прописываю в терминале:
+
+colcon build
+
+ВНИМАНИЕ: эта команда МОЖЕТ зависать. Так что используйте команду ниже, если зависло:
+
+colcon build --packages-select turtlebot3_gazebo --symlink-install --parallel-workers 2 --continue-on-error
+
+18. Пишем в терминале:
+
+taisia@taisia-Inspiron-5558:~/ros2_ws_1$ source /opt/ros/humble/setup.bash
+taisia@taisia-Inspiron-5558:~/ros2_ws_1$ source ~/ros2_ws_1/install/setup.bash
+taisia@taisia-Inspiron-5558:~/ros2_ws_1$ export TURTLEBOT3_MODEL=waffle
+ros2 launch turtlebot3_gazebo world_my1.launch.py
+
+
+=========================================================================
+
+
+19. Открывает новый терминал, пишем 
+
+source ~/ros2_ws_1/install/setup.bash
+ros2 run image_tools showimage
+
+20. Открываем еще один терминал
+
+taisia@taisia-Inspiron-5558:~/ros2_ws_1$ source ~/ros2_ws_1/install/setup.bash
+taisia@taisia-Inspiron-5558:~/ros2_ws_1$ ros2 launch turtlebot3_bringup rviz2.launch.py
+
+В RViz2:
+
+Добавьте новый дисплей типа Image. Для этого внизу слева есть кнопочка Add
+Установите Topic на /camera/image_raw.
+Теперь вы должны видеть мир world_1 в Gazebo и вывод изображения с камеры робота в RViz или через image_tools.
+
+
+21. В НОВОМ терминале
+
+source ~/ros2_ws_1/install/setup.bash
+
+ros2 run turtlebot3_teleop teleop_keyboard
+
+Чтобы робот двигался, нужно быть как бы в этом терминале
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=========================================================================
+
+Для 4 тертлбота!!!!!!!!!!!!!!!!!!!!!!
+
+22. Выполни в терминале команды:
+
+source /opt/ros/humble/setup.bash
+mkdir -p ~/project/vlbarsegyan/turtlebot4_ws/src
+cd ~/project/vlbarsegyan/turtlebot4_ws/src
+git clone https://github.com/turtlebot/turtlebot4.git
+cd ..
+colcon build --symlink-install
+
+
+Переносим созданный мир в папку turtlebot4_simulator/turtlebot4_ignition_bringup/worlds, можно переименовать для удобства
+Запускаем симуляцию командой
+
+ros2 launch turtlebot4_ignition_bringup turtlebot4_ignition.launch.py world:={имя файла} x:={позиция робота по x} y:={позиция робота по y}
+
+
+
+==========================================================================
+
+
+
+To manually install this metapackage from source, clone the git repository:
+
+cd ~/turtlebot4_ws/src
+git clone https://github.com/turtlebot/turtlebot4_simulator.git -b humble
+
+Install dependencies:
+
+cd ~/turtlebot4_ws
+rosdep install --from-path src -yi
+
+Build the packages:
+
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install
+
+Next, the workspace must be sourced by running source ~/turtlebot4_ws/install/setup.bash in the terminal or by adding that command in the .bashrc file and sourcing the .bashrc file.
+
+
+ros2 launch turtlebot4_ignition_bringup turtlebot4_ignition.launch.py world:=world
+
+
