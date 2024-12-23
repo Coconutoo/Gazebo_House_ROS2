@@ -527,68 +527,107 @@
 
 2. Запускаем робота в мире:
 
+```
 taisia@taisia-Inspiron-5558:~$ source /opt/ros/humble/setup.bash
 taisia@taisia-Inspiron-5558:~$ cd ros2_ws_1
 taisia@taisia-Inspiron-5558:~/ros2_ws_1$ source ~/ros2_ws_1/install/setup.bash
 taisia@taisia-Inspiron-5558:~/ros2_ws_1$ export TURTLEBOT3_MODEL=waffle
 ros2 launch turtlebot3_gazebo world_smaller.launch.py
+```
 
 3. Топик скана
 
+```
 taisia@taisia-Inspiron-5558:~/ros2_ws_1$ source /opt/ros/humble/setup.bash
 taisia@taisia-Inspiron-5558:~/ros2_ws_1$ source ~/ros2_ws_1/install/setup.bash
 taisia@taisia-Inspiron-5558:~/ros2_ws_1$ export TURTLEBOT3_MODEL=waffle
 taisia@taisia-Inspiron-5558:~/ros2_ws_1$ ros2 topic list
 taisia@taisia-Inspiron-5558:~/ros2_ws_1$ ros2 topic echo /scan
+```
 
 4. Скачать и запустить слэм:
 
 В новом терминале
 
-aisia@taisia-Inspiron-5558:~/ros2_ws_1$ source /opt/ros/humble/setup.bash
+```
+taisia@taisia-Inspiron-5558:~/ros2_ws_1$ source /opt/ros/humble/setup.bash
 taisia@taisia-Inspiron-5558:~/ros2_ws_1$ source ~/ros2_ws_1/install/setup.bash
+```
 
-Установка:
+- Установка:
+```
 sudo apt install ros-humble-slam-toolbox
-Запуск:
+```
+- Запуск:
+
+```
 export TURTLEBOT3_MODEL=waffle
 ros2 launch slam_toolbox online_async_launch.py
+```
 
 5. Визуализация:
 
+```
 source /opt/ros/humble/setup.bash
 source ~/ros2_ws_1/install/setup.bash
 ros2 run rviz2 rviz2
+```
 
 В RViz:
-Найдите кнопку "Add" в левой панели.
-Выберите "Map" и подключите его к топику /map. Карта должна начать отображаться.
-Добавьте дисплей "LaserScan":
-Также через кнопку "Add" выберите "LaserScan".
-Подключите его к топику /scan. Вы должны увидеть данные лидара в виде точек.
+
+- Найдите кнопку "Add" в левой панели.
+- Выберите "Map" и подключите его к топику /map. Карта должна начать отображаться.
+- Добавьте дисплей "LaserScan":
+- Также через кнопку "Add" выберите "LaserScan".
+- Подключите его к топику /scan. Вы должны увидеть данные лидара в виде точек.
 
 Там же добавляем топик камеры
+```
 /camera/image_raw
+```
 
 Если бы мы не строили карту, то чисто для визуализации можно
+```
 ros2 run rqt_image_view rqt_image_view
+```
 
 В окошечке, которое появляется выбираем топик камеры (например, /camera/image_raw)
 
 6. Управление:
 
+```
 source /opt/ros/humble/setup.bash
 source ~/ros2_ws_1/install/setup.bash
 ros2 run turtlebot3_teleop teleop_keyboard
+```
 
 
 Двигаем робота. рисуем карту, когда доделали, жмакаем в новом терминале:
 
+```
 source /opt/ros/humble/setup.bash
 source ~/ros2_ws_1/install/setup.bash
 ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws_1/map
+```
+
+Отлично, у нас уже есть карта по итогу этого скрипта!
 
 Карта сохранится в файлы map.yaml и map.pgm (или .png) в директории ~/ros2_ws_1
 
 Имейте в виде, если переделываете карту, пишите map2, например, в конце. Иначе перезапишется картинка, и старая удалится!
 
+
+7. Далее (а можно и параллельно с предыдущим шагом):
+
+Запускаем в новом терминале скрипты. Скрипты мы кладём в рабочую директорию в папку scripts: ~/ros2_ws_1/scripts
+
+```
+python3 run_all_scripts.py
+```
+
+Что делают скрипты:
+
+- Каждый скрипт может работать по отдельности, но если хочется запустить сразу, то это run_all_scripts.py
+- Скрипты создают фотографии с камеры робота, и снимают данные с лидара. Фото записываются в папку images.
+- Всё это объединяется в csv файл, где есть время создания строки, путь до изображения, соответствующие данные с лидара.
+- Три разных скрипта создают три разные варианта чтения картинки: шифровка в RGB, шифровка в bytesIO, и просто запись пути до изображения: "images/image_20241215_152156.png"
